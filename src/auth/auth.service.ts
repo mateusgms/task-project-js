@@ -6,8 +6,8 @@ import {
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDTO } from './dto/signupDTO';
-import { User } from 'src/users/users.model';
 import { LoginDTO } from './dto/loginDTO';
+import { User } from '../users/users.entity';
 
 @Injectable()
 export class AuthService {
@@ -20,8 +20,8 @@ export class AuthService {
     return this.usersService.findOne(username);
   }
 
-  createAccessToken(username: string): { accessToken: string } {
-    return { accessToken: this.jwtService.sign({ sub: username }) };
+  createAccessToken(username: string): string {
+    return this.jwtService.sign({ sub: username });
   }
   async signup(newUser: SignUpDTO): Promise<{ accessToken: string }> {
     if (await this.usersService.findOne(newUser.username)) {
@@ -35,9 +35,10 @@ export class AuthService {
       password: newUser.password,
       firstName: newUser.firstName,
       lastName: newUser.lastName,
+      accessToken: this.createAccessToken(newUser.username),
     };
     this.usersService.add(user);
-    return this.createAccessToken(user.username);
+    return { accessToken: user.accessToken };
   }
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -57,7 +58,7 @@ export class AuthService {
       const passwordCrypt = validUser.password;
       if (!passwordCrypt) throw new Error();
 
-      return this.createAccessToken(user.username);
+      return { accessToken: this.createAccessToken(user.username) };
     } catch (e) {
       throw new UnauthorizedException('Username or password incorrect');
     }

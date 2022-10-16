@@ -10,7 +10,6 @@ import { SignUpDTO } from './dto/signupDTO';
 export class SignupPipe implements PipeTransform {
   transform(value: unknown, _metadata: ArgumentMetadata) {
     const errors: string[] = [];
-    console.log(value);
     if (!this.valueHasPassAndConfPass(value)) {
       throw new BadRequestException('Invalid Request Body');
     }

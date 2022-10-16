@@ -45,6 +45,12 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Adding Migrations
+
+```bash
+$ MIGRATION_NAME=user npm run mig:create
+```
+
 ## Test
 
 ```bash
