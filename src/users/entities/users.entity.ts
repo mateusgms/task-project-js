@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Project } from '../../projects/entities/project.entity';
 
-@Entity()
+@Entity('User', { schema: 'TODO_APP' })
 export class User {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id', unsigned: true })
   id: number;
@@ -14,4 +15,6 @@ export class User {
   lastName: string;
   @Column('varchar')
   accessToken: string;
+  @OneToMany(() => Project, (project) => project.user, { cascade: true })
+  projects?: Project[];
 }

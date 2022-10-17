@@ -1,24 +1,28 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { IncomingMessage } from 'http';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(private readonly jwtService: AuthService) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = this.getRequest<
       IncomingMessage & { user?: Record<string, unknown> }
     >(context);
 
     try {
       const token = this.getToken(request);
-      const user = this.jwtService.verify(token);
+      const user = this.jwtService.verifyJwt(token);
       request.user = user;
       return true;
     } catch (e) {
-      // return false or throw a specific error if desired
-      return false;
+      throw new InternalServerErrorException(e.message);
     }
   }
   protected getToken(request: {
