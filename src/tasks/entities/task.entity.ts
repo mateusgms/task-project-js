@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Project } from '../../projects/entities/project.entity';
-import { User } from '../../users/entities/users.entity';
 
 @Entity('Task', { schema: 'TODO_APP' })
 export class Task {
@@ -17,16 +16,17 @@ export class Task {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'project_id', referencedColumnName: 'id' }])
-  project: User;
+  project: number;
 
   @Column('enum', { enum: ['TODO', 'DONE'], default: 'TODO' })
   status: 'TODO' | 'DONE';
 
   @Column('varchar')
   description: string;
+
   @Column('datetime', { name: 'start_at' })
   startAt: Date;
 
-  @Column('datetime', { name: 'end_at' })
-  endAt: Date;
+  @Column('datetime', { name: 'end_at', nullable: true })
+  endAt?: Date;
 }

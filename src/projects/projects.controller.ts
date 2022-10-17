@@ -15,14 +15,12 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateProjectPipe } from './create-project.pipe';
 import { AuthService } from '../auth/auth.service';
-import { UsersService } from '../users/users.service';
 
 @Controller('projects')
 export class ProjectsController {
   constructor(
     private readonly projectsService: ProjectsService,
     private readonly authService: AuthService,
-    private readonly userService: UsersService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -42,6 +40,7 @@ export class ProjectsController {
     return this.projectsService.create(createProjectDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Req() req) {
     const id = this.authService.extractInfoFromToken(req.headers.authorization)[
@@ -50,7 +49,7 @@ export class ProjectsController {
     console.log(id);
     return this.projectsService.findAll(id);
   }
-
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -63,6 +62,7 @@ export class ProjectsController {
     return this.projectsService.update(id, updateProjectDto, userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: number, @Req() req) {
     const userId = this.authService.extractInfoFromToken(
